@@ -1,11 +1,18 @@
 #include "robots_vs_lasers.h"
-#include <iostream>
 
-RobotsVsLasers::RobotsVsLasers()
+RobotsVsLasers::RobotsVsLasers(std::string northLasers, std::string conveyorBelt, std::string southLasers)
 {
+  this->northLasers = northLasers;
+  this->conveyorBelt = conveyorBelt;
+  this->southLasers = southLasers;
 }
 
-void RobotsVsLasers::hello()
+RobotsVsLasers::~RobotsVsLasers()
 {
-  std::cout << "Hello, Robots vs. Lasers!";
+  // Nothing to do here?
+}
+
+std::string RobotsVsLasers::go()
+{
+  return "GO!";
 }
