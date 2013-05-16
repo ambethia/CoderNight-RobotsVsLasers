@@ -13,6 +13,10 @@ class Decommissionator
   private:
     bitset<MAX_LASERS> northLasers;
     bitset<MAX_LASERS> southLasers;
+    bitset<MAX_LASERS> maskOne;
+    bitset<MAX_LASERS> maskTwo;
     int positionOfEntry;
-    int simulateLasers(int direction);
+    int simulateLaserFire(int direction);
+    bitset<MAX_LASERS> filterLasersByDirection(bitset<MAX_LASERS> lasers, int direction);
+    bitset<MAX_LASERS> makeMask(string parity);
 };

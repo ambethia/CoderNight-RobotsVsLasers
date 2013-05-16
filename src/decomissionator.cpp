@@ -13,6 +13,8 @@ Decommissionator::Decommissionator(bitset<MAX_LASERS> northLasers, bitset<MAX_LA
   this->northLasers = northLasers;
   this->southLasers = southLasers;
   this->positionOfEntry = positionOfEntry;
+  this->maskOne = makeMask("01");
+  this->maskTwo = makeMask("10");
 }
 
 Decommissionator::~Decommissionator()
@@ -22,56 +24,42 @@ Decommissionator::~Decommissionator()
 
 string Decommissionator::annihilate()
 {
-  bitset<MAX_LASERS> northWesternLasers = northLasers << MAX_LASERS - positionOfEntry - 1;
-  bitset<MAX_LASERS> southWesternLasers = southLasers << MAX_LASERS - positionOfEntry - 1;
-  bitset<MAX_LASERS> northEasternLasers = northLasers >> positionOfEntry;
-  bitset<MAX_LASERS> southEasternLasers = southLasers >> positionOfEntry;
-
-  string maskOneString;
-  for (int i = 0; i < MAX_LASERS / 2; i++) {
-    maskOneString += "01";
-  }
-  bitset<MAX_LASERS> maskOne (maskOneString);
-
-  string maskTwoString;
-  for (int i = 0; i < MAX_LASERS / 2; i++) {
-    maskTwoString += "10";
-  }
-  bitset<MAX_LASERS> maskTwo (maskTwoString);
-
-  northWesternLasers &= maskTwo;
-  southWesternLasers &= maskOne;
-
-  northEasternLasers &= maskOne;
-  southEasternLasers &= maskTwo;
-
-  int northWesternHits = northWesternLasers.count();
-  int southWesternHits = southWesternLasers.count();
-  int northEasternHits = northEasternLasers.count();
-  int southEasternHits = southEasternLasers.count();
-
-  // printf("nw%d sw:%d ne%d se:%d\n", northWesternHits, southWesternHits, northEasternHits, southEasternHits);
-
-  // printf("nwl %s\n", northWesternLasers.to_string().c_str());
-  // printf("swl %s\n", southWesternLasers.to_string().c_str());
-  // printf("nel %s\n", northEasternLasers.to_string().c_str());
-  // printf("sel %s\n", southEasternLasers.to_string().c_str());
-
-  // printf("nl  %s\n", northLasers.to_string().c_str());
-  // printf("sl  %s\n", southLasers.to_string().c_str());
-
-  // printf("%d\n", simulateLasers(1));
-
-  if (northEasternHits + southEasternHits < northWesternHits + southWesternHits)
+  if (simulateLaserFire(EAST) < simulateLaserFire(WEST))
   {
     return "GO EAST";
   } else {
     return "GO WEST";
   }
-  // return "GO ? " + northLasers.to_string(); // + '\n' + northWesternLasers.to_string();
 }
 
-int Decommissionator::simulateLasers(int direction)
+// Apply masks to cancel out lasers that won't fire
+int Decommissionator::simulateLaserFire(int direction)
 {
-  return direction ? 7 : 8;
+  bitset<MAX_LASERS> north = filterLasersByDirection(northLasers, direction);
+  bitset<MAX_LASERS> south = filterLasersByDirection(southLasers, direction);
+  north &= direction ? maskTwo : maskOne;
+  south &= direction ? maskOne : maskTwo;
+  return north.count() + south.count();
+}
+
+//
+// Shift the bits, trimming off lasers that aren't in the direction we're going.
+//
+bitset<MAX_LASERS> Decommissionator::filterLasersByDirection(bitset<MAX_LASERS> lasers, int direction)
+{
+  if (direction == EAST)
+  {
+    return lasers >> positionOfEntry;
+  } else {
+    return lasers << MAX_LASERS - positionOfEntry - 1;
+  }
+}
+
+bitset<MAX_LASERS> Decommissionator::makeMask(string parity)
+{
+  string maskString;
+  for (int i = 0; i < MAX_LASERS / 2; i++) {
+    maskString += parity;
+  }
+  return bitset<MAX_LASERS> (maskString);
 }
