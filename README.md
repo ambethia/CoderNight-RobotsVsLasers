@@ -9,4 +9,4 @@ Attempting a C++ solution, because I've never really written anything in C++ bef
 The program reads the input from stdin and replies on stdout.
 
     make
-    cat puzzle/input.txt | ./robots-vs-lasers
+    cat puzzle/input.txt | ./robots-vs-lasers > output.txt
