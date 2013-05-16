@@ -1,20 +1,14 @@
 #include <string>
+#include "decommissionator.h"
 
-enum
-{
-  NORTH_LASERS,
-  CONVEYOR_BELT,
-  SOUTH_LASERS
-};
+using namespace std;
 
 class RobotsVsLasers
 {
   public:
-    RobotsVsLasers(std::string northLasers, std::string conveyorBelt, std::string southLasers);
+    RobotsVsLasers();
     ~RobotsVsLasers();
-    std::string go();
   private:
-    std::string northLasers;
-    std::string conveyorBelt;
-    std::string southLasers;
+    bitset<MAX_LASERS> laserStringToBitset(string lasers);
+    int findPositionOfEntry(string belt);
 };
